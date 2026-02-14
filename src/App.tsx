@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link, Outlet } from 'react-router-dom'
 import { Box, Flex, Button } from '@chakra-ui/react'
-import { useState } from 'react'
+import LandingPage from './pages/LandingPage'
 
 // Placeholder components
 const Dashboard = () => <Box p={5}>Dashboard Content</Box>
@@ -8,7 +8,7 @@ const Journal = () => <Box p={5}>Journal Content</Box>
 const Quran = () => <Box p={5}>Quran Content</Box>
 const Dua = () => <Box p={5}>Dua Content</Box>
 const Settings = () => <Box p={5}>Settings Content</Box>
-const Setup = () => <Box p={5}>Setup Content - <Link to="/">Complete Setup</Link></Box>
+const Setup = () => <Box p={5}>Setup Content - <Link to="/dashboard">Complete Setup</Link></Box>
 
 // Navigation
 const Navigation = () => (
@@ -24,7 +24,7 @@ const Navigation = () => (
     right={0}
     zIndex={100}
   >
-    <Link to="/"><Button variant="ghost" colorPalette="white">Home</Button></Link>
+    <Link to="/dashboard"><Button variant="ghost" colorPalette="white">Home</Button></Link>
     <Link to="/journal"><Button variant="ghost" colorPalette="white">Journal</Button></Link>
     <Link to="/quran"><Button variant="ghost" colorPalette="white">Quran</Button></Link>
     <Link to="/dua"><Button variant="ghost" colorPalette="white">Dua</Button></Link>
@@ -43,9 +43,10 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/setup" element={<Setup />} />
         <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/quran" element={<Quran />} />
           <Route path="/dua" element={<Dua />} />
