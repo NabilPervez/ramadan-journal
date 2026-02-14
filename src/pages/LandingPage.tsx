@@ -7,24 +7,26 @@ const MotionBox = motion(Box)
 
 const Feature = ({ icon, title, text }: { icon: React.ReactElement, title: string, text: string }) => (
     <VStack
-        bg="white"
+        bg="#151F26"
         p={6}
         rounded="xl"
         shadow="md"
         align="start"
         gap={4}
         height="100%"
-        _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }}
+        _hover={{ transform: 'translateY(-5px)', shadow: 'lg', bg: "#1E2A35" }}
         transition="all 0.3s"
-        color="gray.800"
+        color="white"
+        border="1px solid"
+        borderColor="whiteAlpha.50"
     >
-        <Box color="#D4AF37" fontSize="2xl">
+        <Box color="#00C6D1" fontSize="2xl">
             {icon}
         </Box>
-        <Heading size="md" fontFamily="'Playfair Display', serif" color="#0F4C5C">
+        <Heading size="md" fontFamily="'Playfair Display', serif" color="white">
             {title}
         </Heading>
-        <Text color="gray.600" fontSize="sm">
+        <Text color="gray.400" fontSize="sm">
             {text}
         </Text>
     </VStack>
@@ -32,16 +34,16 @@ const Feature = ({ icon, title, text }: { icon: React.ReactElement, title: strin
 
 const LandingPage = () => {
     return (
-        <Box bg="#F5F1E8" minH="100vh" color="#2C3E50">
+        <Box bg="#0B1116" minH="100vh" color="white">
             {/* Hero Section */}
-            <Box bg="#0F4C5C" color="#F5F1E8" pt={20} pb={32} px={4} position="relative" overflow="hidden">
+            <Box bgGradient="linear(to-b, #0F1720, #0B1116)" pt={20} pb={32} px={4} position="relative" overflow="hidden">
                 <Box
                     position="absolute"
                     top={0}
                     left={0}
                     right={0}
                     bottom={0}
-                    opacity={0.1}
+                    opacity={0.05}
                     bgImage="url('https://www.transparenttextures.com/patterns/arabesque.png')"
                 />
                 <Container maxW="container.xl" position="relative" zIndex={1}>
@@ -57,10 +59,11 @@ const LandingPage = () => {
                                 fontFamily="'Playfair Display', serif"
                                 mb={4}
                                 lineHeight="1.2"
+                                color="white"
                             >
                                 Ramadan Reflections
                             </Heading>
-                            <Text fontSize="xl" opacity={0.9} fontWeight="light">
+                            <Text fontSize="xl" opacity={0.8} fontWeight="light" color="gray.300">
                                 Your holistic digital companion for a mindful, spiritual, and balanced Ramadan.
                             </Text>
                         </MotionBox>
@@ -73,14 +76,15 @@ const LandingPage = () => {
                             <Link to="/setup">
                                 <Button
                                     size="lg"
-                                    bg="#D4AF37"
-                                    color="#F5F1E8"
-                                    _hover={{ bg: "#C5A028" }}
+                                    bg="#00C6D1"
+                                    color="#0B1116"
+                                    _hover={{ bg: "#00A8B3" }}
                                     px={10}
                                     py={8}
                                     fontSize="xl"
                                     rounded="full"
                                     shadow="xl"
+                                    fontWeight="bold"
                                 >
                                     TRY NOW
                                 </Button>
@@ -117,25 +121,25 @@ const LandingPage = () => {
             </Container>
 
             {/* Benefits / Why Use Section */}
-            <Box py={20} bg="white">
+            <Box py={20} bg="#0B1116">
                 <Container maxW="container.xl">
                     <Stack direction={{ base: "column", md: "row" }} gap={12} align="center">
                         <Box flex={1}>
-                            <Heading color="#0F4C5C" fontFamily="'Playfair Display', serif" mb={6}>
+                            <Heading color="white" fontFamily="'Playfair Display', serif" mb={6}>
                                 More Than Just a Tracker
                             </Heading>
-                            <Text fontSize="lg" color="gray.600" mb={4}>
-                                Unlike standard apps that just tick boxes, Ramadan Reflections focuses on the <strong>quality</strong> of your experience.
+                            <Text fontSize="lg" color="gray.400" mb={4}>
+                                Unlike standard apps that just tick boxes, Ramadan Reflections focuses on the <Text as="span" color="#00C6D1" fontWeight="bold">quality</Text> of your experience.
                             </Text>
-                            <Text fontSize="lg" color="gray.600">
+                            <Text fontSize="lg" color="gray.400">
                                 Whether you are a busy professional needing efficiency, or a spiritual seeker wanting depth, this companion adapts to your journey.
                             </Text>
                         </Box>
-                        <Box flex={1} bg="#F5F1E8" p={10} rounded="2xl" position="relative">
-                            <Heading size="lg" color="#0F4C5C" fontFamily="'Playfair Display', serif" mb={4}>
+                        <Box flex={1} bg="#151F26" p={10} rounded="2xl" position="relative" border="1px solid" borderColor="whiteAlpha.100">
+                            <Heading size="lg" color="#00C6D1" fontFamily="'Playfair Display', serif" mb={4}>
                                 "Ihsaan, Sakinah, Clarity"
                             </Heading>
-                            <Text fontStyle="italic" color="gray.700">
+                            <Text fontStyle="italic" color="gray.300">
                                 Built on the principles of excellence and tranquility, helping you verify that your fasting positively impacts your spiritual and physical well-being.
                             </Text>
                         </Box>
@@ -145,17 +149,18 @@ const LandingPage = () => {
 
             {/* Final CTA */}
             <Box py={20} textAlign="center">
-                <Heading size="xl" color="#0F4C5C" fontFamily="'Playfair Display', serif" mb={8}>
+                <Heading size="xl" color="white" fontFamily="'Playfair Display', serif" mb={8}>
                     Ready for your best Ramadan yet?
                 </Heading>
                 <Link to="/setup">
                     <Button
                         size="lg"
-                        bg="#0F4C5C"
-                        color="#F5F1E8"
-                        _hover={{ bg: "#093642" }}
+                        bg="#00C6D1"
+                        color="#0B1116"
+                        _hover={{ bg: "#00A8B3" }}
                         rounded="full"
                         px={10}
+                        fontWeight="bold"
                     >
                         Start Your Journey
                     </Button>

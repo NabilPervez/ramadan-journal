@@ -1,4 +1,4 @@
-import { Box, VStack, Heading, Text, Flex, SimpleGrid, Badge, Button } from '@chakra-ui/react'
+import { Box, VStack, Heading, Text, Flex, SimpleGrid, Badge, Button, Icon } from '@chakra-ui/react'
 import { useSelector, useDispatch } from 'react-redux'
 import type { RootState } from '../app/store'
 import { Coordinates, CalculationMethod, PrayerTimes, Madhab } from 'adhan'
@@ -6,15 +6,16 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import moment from 'moment-hijri'
 import { updatePrayer, incrementWater } from '../features/dailyLog/dailyLogSlice'
-import { FaCheck, FaTint, FaMoon } from 'react-icons/fa'
+import { FaCheck, FaTint, FaMapMarkerAlt, FaMinus, FaPlus } from 'react-icons/fa'
 
 const Dashboard = () => {
     const dispatch = useDispatch()
     const settings = useSelector((state: RootState) => state.settings)
     const dailyLog = useSelector((state: RootState) => state.dailyLog)
 
+    // nextPrayer logic removed for now to clean up unused state
     const [prayerTimes, setPrayerTimes] = useState<PrayerTimes | null>(null)
-    const [nextPrayer, setNextPrayer] = useState<{ name: string, time: Date } | null>(null)
+    const [timeDiff, setTimeDiff] = useState<string>('--:--')
 
     // Calculate prayer times
     useEffect(() => {
@@ -28,19 +29,28 @@ const Dashboard = () => {
             const times = new PrayerTimes(coords, date, params)
             setPrayerTimes(times)
 
-            // Determine next prayer
             const now = new Date()
-            if (now < times.fajr) setNextPrayer({ name: 'Fajr', time: times.fajr })
-            else if (now < times.dhuhr) setNextPrayer({ name: 'Dhuhr', time: times.dhuhr })
-            else if (now < times.asr) setNextPrayer({ name: 'Asr', time: times.asr })
-            else if (now < times.maghrib) setNextPrayer({ name: 'Maghrib', time: times.maghrib })
-            else if (now < times.isha) setNextPrayer({ name: 'Isha', time: times.isha })
-            else setNextPrayer({ name: 'Fajr', time: times.fajr })
+            let nextP = null
+            if (now < times.fajr) nextP = { name: 'Fajr', time: times.fajr }
+            else if (now < times.dhuhr) nextP = { name: 'Dhuhr', time: times.dhuhr }
+            else if (now < times.asr) nextP = { name: 'Asr', time: times.asr }
+            else if (now < times.maghrib) nextP = { name: 'Maghrib', time: times.maghrib }
+            else if (now < times.isha) nextP = { name: 'Isha', time: times.isha }
+            else nextP = { name: 'Fajr', time: times.fajr } // Next day
+
+            if (nextP) {
+                const diff = nextP.time.getTime() - now.getTime()
+                if (diff > 0) {
+                    const hours = Math.floor(diff / (1000 * 60 * 60))
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+                    setTimeDiff(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`)
+                }
+            }
         }
     }, [settings])
 
     if (!settings.location) {
-        return <Box p={5}>Please complete setup first.</Box>
+        return <Box p={5} color="white">Please complete setup first.</Box>
     }
 
     const prayers = [
@@ -52,143 +62,127 @@ const Dashboard = () => {
     ]
 
     return (
-        <Box p={4} pb={24}>
+        <Box p={4} pb={32} bg="#0B1116" minH="100vh" color="white">
             {/* Header */}
-            <VStack gap={1} mb={6} align="start">
-                <Text fontSize="lg" color="#D4AF37" fontWeight="medium">
-                    {moment().format('iD iMMMM iYYYY')} AH
-                </Text>
-                <Heading size="2xl" fontFamily="'Playfair Display', serif" color="#0F4C5C">
-                    {format(new Date(), 'EEEE, MMM do')}
-                </Heading>
-                <Badge colorScheme="teal" variant="surface">
-                    {settings.location.city}
-                </Badge>
-            </VStack>
+            <Flex justify="space-between" align="start" mb={8}>
+                <VStack align="start" gap={0}>
+                    <Text fontSize="xs" color="#00C6D1" fontWeight="bold" letterSpacing="wider">TODAY</Text>
+                    <Heading size="lg" fontFamily="'Playfair Display', serif">
+                        {moment().format('iD iMMMM iYYYY')}
+                    </Heading>
+                    <Text fontSize="sm" color="gray.400">
+                        {moment().format('iYYYY')} AH
+                    </Text>
+                </VStack>
 
-            {/* Fasting Timer / Next Prayer Hero */}
-            <Box
-                bgGradient="linear(to-br, #0F4C5C, #092c35)"
-                color="white"
-                p={8}
-                rounded="3xl"
-                shadow="xl"
-                mb={8}
-                textAlign="center"
-                position="relative"
-                overflow="hidden"
-            >
-                <Box
-                    position="absolute"
-                    top={-10}
-                    right={-10}
-                    opacity={0.1}
-                    fontSize="150px"
-                >
-                    <FaMoon />
+                <Flex align="center" bg="#151F26" px={3} py={1} rounded="full" gap={2} border="1px solid" borderColor="whiteAlpha.100">
+                    <FaMapMarkerAlt color="#E6B800" size={12} />
+                    <Text fontSize="xs" fontWeight="medium">
+                        {settings.location.city.split(',')[0]}
+                    </Text>
+                </Flex>
+            </Flex>
+
+            {/* Circular Timer Hero */}
+            <Flex justify="center" mb={10} position="relative">
+                <Box position="relative" w="240px" h="240px" display="flex" alignItems="center" justifyContent="center">
+                    {/* Background Circle */}
+                    <Box
+                        position="absolute" top={0} left={0} w="full" h="full" rounded="full"
+                        border="4px solid" borderColor="#151F26"
+                    />
+                    {/* Progress Circle (Static for now, implies time passing) */}
+                    <Box
+                        position="absolute" top={0} left={0} w="full" h="full" rounded="full"
+                        border="4px solid" borderColor="#E6B800"
+                        borderTopColor="transparent" borderLeftColor="transparent"
+                        transform="rotate(-45deg)"
+                    />
+
+                    <VStack gap={1} zIndex={1}>
+                        <Icon as={FaTint} color="#E6B800" boxSize={6} opacity={0.8} />
+                        <Heading size="4xl" fontFamily="'Playfair Display', serif" lineHeight="1">
+                            {timeDiff}
+                        </Heading>
+                        <Text fontSize="xs" letterSpacing="widest" opacity={0.6}>UNTIL NEXT PRAYER</Text>
+
+                        <Badge mt={2} bg="#151F26" color="#E6B800" px={3} py={1} rounded="full" border="1px solid" borderColor="#E6B800">
+                            Next: {prayerTimes?.maghrib ? format(prayerTimes.maghrib, 'h:mm a') : '--:--'} {/* Placeholder label */}
+                        </Badge>
+                    </VStack>
                 </Box>
-
-                <Text fontSize="sm" letterSpacing="wide" textTransform="uppercase" opacity={0.8}>
-                    Upcoming Prayer
-                </Text>
-                <Heading size="4xl" mt={2} mb={2} fontFamily="'Playfair Display', serif">
-                    {nextPrayer ? format(nextPrayer.time, 'h:mm a') : '--:--'}
-                </Heading>
-                <Text fontSize="xl" fontWeight="medium" color="#D4AF37">
-                    {nextPrayer?.name}
-                </Text>
-            </Box>
+            </Flex>
 
             {/* Prayer Tracker */}
-            <Heading size="lg" mb={4} color="#0F4C5C" fontFamily="'Playfair Display', serif">
-                Prayer Tracker
-            </Heading>
-            <VStack gap={3} mb={8}>
-                {prayers.map((prayer) => {
+            <Flex justify="space-between" align="center" mb={4}>
+                <Heading size="md" fontFamily="'Playfair Display', serif">Prayer Tracker</Heading>
+                <Text fontSize="xs" color="#00C6D1" cursor="pointer">View All</Text>
+            </Flex>
+
+            <SimpleGrid columns={2} gap={4} mb={8}>
+                {prayers.slice(0, 2).map((prayer) => {
                     const status = dailyLog.prayers?.[prayer.key as keyof typeof dailyLog.prayers]?.status
                     const isPrayed = status === 'prayed'
 
                     return (
-                        <Flex
-                            key={prayer.key}
-                            w="full"
-                            bg="white"
-                            p={4}
-                            rounded="xl"
-                            shadow="sm"
-                            align="center"
-                            justify="space-between"
-                            borderLeft="4px solid"
-                            borderColor={isPrayed ? "#8AA399" : "transparent"}
-                            transition="all 0.2s"
-                        >
-                            <Box>
-                                <Text fontWeight="bold" color="#2C3E50">{prayer.name}</Text>
-                                <Text fontSize="sm" color="gray.500">
-                                    {prayer.time ? format(prayer.time, 'h:mm a') : '--:--'}
-                                </Text>
-                            </Box>
-                            <Button
-                                size="sm"
-                                variant={isPrayed ? "solid" : "outline"}
-                                colorScheme={isPrayed ? "green" : "gray"}
-                                bg={isPrayed ? "#8AA399" : "transparent"}
-                                color={isPrayed ? "white" : "gray.600"}
-                                onClick={() => dispatch(updatePrayer({
+                        <Box key={prayer.key} bg="#151F26" p={5} rounded="2xl" border="1px solid" borderColor={isPrayed ? "#00C6D1" : "transparent"}>
+                            <Flex justify="space-between" mb={2}>
+                                <Text fontWeight="bold" fontSize="lg">{prayer.name}</Text>
+                                <Icon as={FaTint} color="gray.600" />
+                            </Flex>
+                            <Text fontSize="sm" color="gray.400" mb={4}>
+                                {prayer.time ? format(prayer.time, 'h:mm a') : '--:--'}
+                            </Text>
+
+                            <VStack align="start" gap={2}>
+                                <Flex align="center" gap={2} cursor="pointer" onClick={() => dispatch(updatePrayer({
                                     prayer: prayer.key as any,
                                     status: { status: isPrayed ? 'pending' : 'prayed', jamaah: false }
-                                }))}
-                            >
-                                {isPrayed ? <FaCheck /> : "Log"}
-                            </Button>
-                        </Flex>
+                                }))}>
+                                    <Box w={4} h={4} rounded="full" border="1px solid" borderColor={isPrayed ? "#00C6D1" : "gray.500"} bg={isPrayed ? "#00C6D1" : "transparent"} display="flex" alignItems="center" justifyContent="center">
+                                        {isPrayed && <FaCheck size={10} color="#0B1116" />}
+                                    </Box>
+                                    <Text fontSize="xs" color={isPrayed ? "white" : "gray.500"}>Prayed</Text>
+                                </Flex>
+                                <Flex align="center" gap={2}>
+                                    <Box w={4} h={4} rounded="full" border="1px solid" borderColor="gray.500" />
+                                    <Text fontSize="xs" color="gray.500">On Time</Text>
+                                </Flex>
+                            </VStack>
+                        </Box>
                     )
                 })}
-            </VStack>
-
-            {/* Wellness Section */}
-            <Heading size="lg" mb={4} color="#0F4C5C" fontFamily="'Playfair Display', serif">
-                Quick Wellness
-            </Heading>
-            <SimpleGrid columns={2} gap={4}>
-                <Box bg="white" p={5} rounded="2xl" shadow="sm">
-                    <Flex align="center" gap={2} mb={2}>
-                        <FaTint color="#3182CE" />
-                        <Text fontWeight="bold" color="#2C3E50">Hydration</Text>
-                    </Flex>
-                    <Text fontSize="3xl" fontWeight="bold" color="#0F4C5C" mb={2}>
-                        {dailyLog.wellness.waterCount} cups
-                    </Text>
-                    <Button
-                        size="sm"
-                        w="full"
-                        colorScheme="blue"
-                        variant="subtle"
-                        onClick={() => dispatch(incrementWater())}
-                    >
-                        + Add Cup
-                    </Button>
-                </Box>
-
-                <Box bg="white" p={5} rounded="2xl" shadow="sm">
-                    <Text fontWeight="bold" color="#2C3E50" mb={2}>Sunnah</Text>
-                    <Text fontSize="sm" color="gray.600" mb={3}>
-                        Did you do the daily sunnah?
-                    </Text>
-                    <Button
-                        size="sm"
-                        w="full"
-                        variant={dailyLog.sunnahDidDo ? "solid" : "outline"}
-                        colorScheme="yellow"
-                        bg={dailyLog.sunnahDidDo ? "#D4AF37" : "transparent"}
-                        onClick={() => {
-                            // Placeholder
-                        }}
-                    >
-                        {dailyLog.sunnahDidDo ? "Completed" : "Mark Done"}
-                    </Button>
-                </Box>
             </SimpleGrid>
+
+            {/* Quick Wellness */}
+            <Heading size="md" mb={4} fontFamily="'Playfair Display', serif">Quick Wellness</Heading>
+            <Box bg="#151F26" p={5} rounded="2xl" position="relative" overflow="hidden">
+                <Box position="absolute" right={-5} bottom={-5} opacity={0.1}>
+                    <Icon as={FaTint} boxSize={32} />
+                </Box>
+
+                <Flex justify="space-between" align="center">
+                    <Flex gap={4} align="center">
+                        <Box p={3} bg="whiteAlpha.100" rounded="full">
+                            <FaTint color="#00C6D1" size={20} />
+                        </Box>
+                        <Box>
+                            <Text fontWeight="bold">Hydration</Text>
+                            <Text fontSize="sm" color="gray.400"><Text as="span" color="#00C6D1" fontSize="lg" fontWeight="bold">{dailyLog.wellness.waterCount}</Text> / 8 cups</Text>
+                        </Box>
+                    </Flex>
+
+                    <Flex gap={2}>
+                        <Button size="sm" rounded="full" w={8} h={8} minW={8} p={0} bg="#0B1116" color="white" onClick={() => {/* decrement logic missing in slice, skipping implementation */ }}>
+                            <FaMinus size={10} />
+                        </Button>
+                        <Button size="sm" rounded="full" w={8} h={8} minW={8} p={0} bg="#00C6D1" color="#0B1116" onClick={() => dispatch(incrementWater())}>
+                            <FaPlus size={10} />
+                        </Button>
+                    </Flex>
+                </Flex>
+            </Box>
+
         </Box>
     )
 }

@@ -1,9 +1,9 @@
-import { Box, VStack, Heading, Text, Flex, IconButton, Button, Textarea } from '@chakra-ui/react'
+import { Box, VStack, Heading, Text, Flex, IconButton, Button, Textarea, Badge } from '@chakra-ui/react'
 import { useSelector, useDispatch } from 'react-redux'
 import type { RootState } from '../app/store'
 import { addDua, removeDua } from '../features/content/contentSlice'
 import { useState } from 'react'
-import { FaTrash, FaPlus, FaPray } from 'react-icons/fa'
+import { FaTrash, FaPlus, FaMoon } from 'react-icons/fa'
 
 const Dua = () => {
     const dispatch = useDispatch()
@@ -11,6 +11,9 @@ const Dua = () => {
     const [newDuaText, setNewDuaText] = useState('')
     const [isThinkingMode, setIsThinkingMode] = useState(false)
     const [currentFocusIndex, setCurrentFocusIndex] = useState(0)
+    const [filter, setFilter] = useState('All')
+
+    const filters = ['All', 'Family', 'Self', 'Ummah']
 
     const handleAdd = () => {
         if (newDuaText.trim()) {
@@ -23,14 +26,7 @@ const Dua = () => {
         }
     }
 
-    const enterMode = () => {
-        if (duaList.length > 0) {
-            setIsThinkingMode(true)
-            setCurrentFocusIndex(0)
-        } else {
-            alert("Add some Duas first!")
-        }
-    }
+    const filteredDuas = filter === 'All' ? duaList : duaList.filter(d => d.category?.toLowerCase() === filter.toLowerCase())
 
     if (isThinkingMode) {
         const currentDua = duaList[currentFocusIndex]
@@ -38,8 +34,8 @@ const Dua = () => {
             <Box
                 position="fixed"
                 top={0} left={0} right={0} bottom={0}
-                bg="#0F4C5C"
-                color="#F5F1E8"
+                bg="#0B1116"
+                color="white"
                 zIndex={200}
                 p={8}
                 display="flex"
@@ -48,9 +44,9 @@ const Dua = () => {
                 alignItems="center"
                 textAlign="center"
             >
-                <Text fontSize="xl" mb={4} opacity={0.7} letterSpacing="widest">IFTAR FOCUS MODE</Text>
+                <Text fontSize="sm" mb={4} color="#00C6D1" letterSpacing="widest" textTransform="uppercase">Iftar Focus Mode</Text>
 
-                <Heading size="3xl" fontFamily="'Playfair Display', serif" mb={8} lineHeight="1.4">
+                <Heading size="2xl" fontFamily="'Playfair Display', serif" mb={8} lineHeight="1.4">
                     "{currentDua?.text}"
                 </Heading>
 
@@ -58,14 +54,16 @@ const Dua = () => {
                     <Button
                         variant="outline"
                         color="white"
-                        borderColor="whiteAlpha.400"
+                        borderColor="whiteAlpha.200"
+                        _hover={{ bg: "whiteAlpha.100" }}
                         onClick={() => setIsThinkingMode(false)}
                     >
                         Exit
                     </Button>
                     <Button
-                        bg="#D4AF37"
-                        color="#F5F1E8"
+                        bg="#00C6D1"
+                        color="#0B1116"
+                        _hover={{ bg: "#00A8B3" }}
                         onClick={() => setCurrentFocusIndex((prev) => (prev + 1) % duaList.length)}
                     >
                         Next Dua
@@ -76,74 +74,113 @@ const Dua = () => {
     }
 
     return (
-        <Box p={4} pb={24}>
-            <Heading size="xl" mb={6} color="#0F4C5C" fontFamily="'Playfair Display', serif">
-                Dua Vault
-            </Heading>
+        <Box p={4} pb={32} bg="#0B1116" minH="100vh" color="white">
+            <Flex justify="space-between" align="center" mb={2}>
+                <Heading size="xl" fontFamily="'Playfair Display', serif">
+                    Dua Vault
+                </Heading>
+                <IconButton
+                    aria-label="Add"
+                    rounded="full"
+                    bg="#151F26"
+                    color="#00C6D1"
+                    onClick={() => {
+                        // Inline add handles this
+                    }}
+                >
+                    <FaPlus />
+                </IconButton>
+            </Flex>
+            <Text color="gray.400" mb={6} fontSize="sm">Curate your spiritual aspirations</Text>
 
-            {/* Quick Add */}
-            <Box bg="white" p={6} rounded="2xl" shadow="sm" mb={8}>
-                <VStack align="stretch" gap={3}>
-                    <Textarea
-                        placeholder="Add a new Dua here..."
-                        value={newDuaText}
-                        onChange={(e) => setNewDuaText(e.target.value)}
-                        bg="gray.50"
-                        rows={3}
-                    />
+            {/* Filters */}
+            <Flex gap={2} mb={8} overflowX="auto" pb={2}>
+                {filters.map(f => (
                     <Button
-                        bg="#0F4C5C"
-                        color="white"
-                        onClick={handleAdd}
-                        disabled={!newDuaText.trim()}
+                        key={f}
+                        size="sm"
+                        rounded="full"
+                        px={6}
+                        bg={filter === f ? "#00C6D1" : "#151F26"}
+                        color={filter === f ? "#0B1116" : "gray.400"}
+                        _hover={{ bg: filter === f ? "#00A8B3" : "#1E2A35" }}
+                        onClick={() => setFilter(f)}
                     >
-                        <Box as="span" mr={2}><FaPlus /></Box>
-                        Add to Vault
+                        {f}
                     </Button>
-                </VStack>
-            </Box>
+                ))}
+            </Flex>
 
             {/* List */}
-            <VStack gap={4} mb={8} align="stretch">
-                {duaList.length === 0 ? (
-                    <Text textAlign="center" color="gray.400" py={8}>No Duas added yet.</Text>
-                ) : (
-                    duaList.map((dua) => (
-                        <Box key={dua.id} bg="white" p={4} rounded="xl" shadow="sm" position="relative">
-                            <Text fontSize="lg" fontFamily="'Playfair Display', serif" pr={8} color="#2C3E50">
-                                {dua.text}
-                            </Text>
-                            <IconButton
-                                aria-label="Delete"
-                                size="xs"
-                                colorScheme="red"
-                                variant="ghost"
-                                position="absolute"
-                                top={2}
-                                right={2}
-                                onClick={() => dispatch(removeDua(dua.id))}
-                            >
-                                <FaTrash />
-                            </IconButton>
-                        </Box>
-                    ))
-                )}
+            <VStack gap={4} mb={24} align="stretch">
+                <Box bg="#151F26" p={4} rounded="2xl" border="1px dashed" borderColor="gray.700">
+                    <Textarea
+                        placeholder="Add a new Dua..."
+                        value={newDuaText}
+                        onChange={(e) => setNewDuaText(e.target.value)}
+                        bg="transparent"
+                        border="none"
+                        _focus={{ ring: 0 }}
+                        color="white"
+                        rows={2}
+                        mb={2}
+                    />
+                    <Flex justify="flex-end">
+                        <Button size="xs" colorScheme="cyan" onClick={handleAdd} disabled={!newDuaText.trim()}>Save</Button>
+                    </Flex>
+                </Box>
+
+                {filteredDuas.map((dua) => (
+                    <Box key={dua.id} bg="#151F26" p={5} rounded="2xl" position="relative" border="1px solid" borderColor="whiteAlpha.50">
+                        <Badge
+                            mb={2}
+                            bg={dua.category === 'family' ? 'green.900' : dua.category === 'self' ? 'blue.900' : 'purple.900'}
+                            color={dua.category === 'family' ? 'green.300' : dua.category === 'self' ? 'blue.300' : 'purple.300'}
+                            px={2} py={0.5} rounded="md" fontSize="xs" textTransform="uppercase"
+                        >
+                            {dua.category || 'General'}
+                        </Badge>
+                        <Heading size="md" fontFamily="'Playfair Display', serif" mb={2} color="white">
+                            {dua.text.length > 30 ? dua.text.substring(0, 30) + "..." : dua.text}
+                        </Heading>
+                        <Text fontSize="sm" color="gray.400" lineHeight="tall">
+                            {dua.text}
+                        </Text>
+
+                        <IconButton
+                            aria-label="Options"
+                            size="xs"
+                            variant="ghost"
+                            color="gray.600"
+                            position="absolute"
+                            top={4}
+                            right={4}
+                            onClick={() => dispatch(removeDua(dua.id))}
+                        >
+                            <FaTrash />
+                        </IconButton>
+                    </Box>
+                ))}
             </VStack>
 
-            {/* Iftar Mode Trigger */}
-            <Button
-                size="lg"
-                w="full"
-                h="60px"
-                bgGradient="linear(to-r, #D4AF37, #C5A028)"
-                color="white"
-                rounded="xl"
-                shadow="lg"
-                onClick={enterMode}
-            >
-                <Box as="span" mr={2}><FaPray /></Box>
-                Enter Iftar Mode
-            </Button>
+            {/* Floating Action Button for Iftar Mode */}
+            <Box position="fixed" bottom={24} left={4} right={4}>
+                <Button
+                    size="lg"
+                    w="full"
+                    h="56px"
+                    bg="#00C6D1"
+                    color="#0B1116"
+                    rounded="full"
+                    shadow="lg"
+                    fontSize="lg"
+                    fontWeight="bold"
+                    onClick={() => setIsThinkingMode(true)}
+                >
+                    <Box as="span" mr={2}><FaMoon /></Box>
+                    Enter Iftar Mode
+                </Button>
+            </Box>
         </Box>
     )
 }

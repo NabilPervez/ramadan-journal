@@ -76,7 +76,6 @@ const Setup = () => {
     }
 
     const handleComplete = () => {
-        // Ensure location is set. If not, force Dallas fallback if user skipped.
         if (!settings.location) {
             dispatch(updateLocation({
                 lat: 32.7767,
@@ -94,30 +93,29 @@ const Setup = () => {
     }
 
     return (
-        <Box minH="100vh" bg="#F5F1E8" p={8} display="flex" alignItems="center" justifyContent="center">
+        <Box minH="100vh" bg="#0B1116" p={8} display="flex" alignItems="center" justifyContent="center">
             <VStack
-                bg="white"
+                bg="#151F26"
                 p={8}
                 rounded="2xl"
                 shadow="xl"
                 gap={8}
                 w="full"
                 textAlign="center"
-                // Removed maxW="md" to allow scaling on desktop, but keeping some constraint for readability if needed
-                // User asked to scale up to full size. Let's use maxW="container.lg" or just flexible width.
                 maxW={{ base: "full", md: "container.md", lg: "container.lg" }}
+                border="1px solid" borderColor="whiteAlpha.100"
             >
-                <Heading fontFamily="'Playfair Display', serif" color="#0F4C5C">
+                <Heading fontFamily="'Playfair Display', serif" color="white">
                     Welcome to Ramadan Reflections
                 </Heading>
-                <Text color="gray.600">
+                <Text color="gray.400">
                     Let's personalize your experience. We need your location to calculate accurate prayer times.
                 </Text>
 
                 <VStack w="full" gap={4} align="start">
-                    <Text fontWeight="bold" color="#0F4C5C">1. Location</Text>
+                    <Text fontWeight="bold" color="#00C6D1">1. Location</Text>
                     {settings.location && !manualMode ? (
-                        <Box p={4} bg="green.50" color="green.700" rounded="md" w="full">
+                        <Box p={4} bg="green.900" color="green.200" rounded="md" w="full" border="1px solid" borderColor="green.700">
                             Location Set: {settings.location.lat.toFixed(2)}, {settings.location.lng.toFixed(2)}
                             <Button size="xs" variant="ghost" ml={2} onClick={() => setManualMode(true)}>Edit</Button>
                         </Box>
@@ -129,43 +127,43 @@ const Setup = () => {
                                         onClick={handleLocation}
                                         loading={isLoadingLocation}
                                         w="full"
-                                        bg="#0F4C5C"
-                                        color="white"
+                                        bg="#00C6D1"
+                                        color="#0B1116"
                                         mb={2}
                                     >
                                         Detect My Location
                                     </Button>
-                                    <Button size="sm" variant="ghost" onClick={() => setManualMode(true)}>
+                                    <Button size="sm" variant="ghost" color="gray.400" onClick={() => setManualMode(true)}>
                                         Enter Manually
                                     </Button>
                                 </Box>
                             ) : (
-                                <VStack w="full" gap={2} align="start" p={4} bg="gray.50" rounded="md">
-                                    <Text fontSize="sm" fontWeight="bold">Manual Entry</Text>
+                                <VStack w="full" gap={2} align="start" p={4} bg="#0B1116" rounded="md" border="1px solid" borderColor="whiteAlpha.100">
+                                    <Text fontSize="sm" fontWeight="bold" color="white">Manual Entry</Text>
                                     <Input
                                         placeholder="City Name"
                                         value={manualCity}
                                         onChange={(e) => setManualCity(e.target.value)}
-                                        bg="white" color="black"
+                                        bg="#151F26" color="white" border="none"
                                     />
                                     <Flex gap={2} w="full">
                                         <Input
                                             placeholder="Latitude"
                                             value={manualLat}
                                             onChange={(e) => setManualLat(e.target.value)}
-                                            bg="white" color="black"
+                                            bg="#151F26" color="white" border="none"
                                         />
                                         <Input
                                             placeholder="Longitude"
                                             value={manualLng}
                                             onChange={(e) => setManualLng(e.target.value)}
-                                            bg="white" color="black"
+                                            bg="#151F26" color="white" border="none"
                                         />
                                     </Flex>
-                                    <Button size="sm" colorScheme="teal" onClick={handleManualLocation}>
+                                    <Button size="sm" colorScheme="cyan" onClick={handleManualLocation}>
                                         Save Location
                                     </Button>
-                                    <Button size="xs" variant="ghost" onClick={() => setManualMode(false)}>
+                                    <Button size="xs" variant="ghost" color="gray.400" onClick={() => setManualMode(false)}>
                                         Cancel
                                     </Button>
                                 </VStack>
@@ -175,16 +173,15 @@ const Setup = () => {
                 </VStack>
 
                 <VStack w="full" gap={4} align="start">
-                    <Text fontWeight="bold" color="#0F4C5C">2. Calculation Method</Text>
+                    <Text fontWeight="bold" color="#00C6D1">2. Calculation Method</Text>
                     <NativeSelect.Root>
                         <NativeSelect.Field
                             value={method}
                             onChange={(e) => setMethod(e.target.value)}
-                            // Fix for white-on-white text
-                            color="gray.800"
-                            bg="gray.50"
-                            borderColor="gray.200"
-                            _focus={{ borderColor: "#D4AF37" }}
+                            color="white"
+                            bg="#0B1116"
+                            borderColor="whiteAlpha.200"
+                            _focus={{ borderColor: "#00C6D1" }}
                         >
                             {calculationMethods.map((m) => (
                                 <option key={m.value} value={m.value} style={{ color: 'black' }}>
@@ -196,14 +193,14 @@ const Setup = () => {
                 </VStack>
 
                 <VStack w="full" gap={4} align="start">
-                    <Text fontWeight="bold" color="#0F4C5C">3. Madhab (Asr Time)</Text>
+                    <Text fontWeight="bold" color="#00C6D1">3. Madhab (Asr Time)</Text>
                     <Stack direction="row" gap={4}>
                         <Button
                             variant={madhab === 'Standard' ? "solid" : "outline"}
-                            bg={madhab === 'Standard' ? "#0F4C5C" : "transparent"}
-                            color={madhab === 'Standard' ? "white" : "#0F4C5C"}
-                            borderColor="#0F4C5C"
-                            _hover={{ bg: madhab === 'Standard' ? "#093642" : "gray.100" }}
+                            bg={madhab === 'Standard' ? "#00C6D1" : "transparent"}
+                            color={madhab === 'Standard' ? "#0B1116" : "#00C6D1"}
+                            borderColor="#00C6D1"
+                            _hover={{ bg: madhab === 'Standard' ? "#00A8B3" : "whiteAlpha.100" }}
                             onClick={() => setMadhab('Standard')}
                             size="sm"
                         >
@@ -211,10 +208,10 @@ const Setup = () => {
                         </Button>
                         <Button
                             variant={madhab === 'Hanafi' ? "solid" : "outline"}
-                            bg={madhab === 'Hanafi' ? "#0F4C5C" : "transparent"}
-                            color={madhab === 'Hanafi' ? "white" : "#0F4C5C"}
-                            borderColor="#0F4C5C"
-                            _hover={{ bg: madhab === 'Hanafi' ? "#093642" : "gray.100" }}
+                            bg={madhab === 'Hanafi' ? "#00C6D1" : "transparent"}
+                            color={madhab === 'Hanafi' ? "#0B1116" : "#00C6D1"}
+                            borderColor="#00C6D1"
+                            _hover={{ bg: madhab === 'Hanafi' ? "#00A8B3" : "whiteAlpha.100" }}
                             onClick={() => setMadhab('Hanafi')}
                             size="sm"
                         >
@@ -224,24 +221,26 @@ const Setup = () => {
                 </VStack>
 
                 <VStack w="full" gap={4} align="start">
-                    <Text fontWeight="bold" color="#0F4C5C">4. My Intention</Text>
+                    <Text fontWeight="bold" color="#00C6D1">4. My Intention</Text>
                     <Input
                         placeholder="My main goal for this Ramadan is..."
                         value={intention}
                         onChange={(e) => setIntention(e.target.value)}
-                        bg="gray.50"
-                        color="gray.800"
+                        bg="#0B1116"
+                        color="white"
+                        border="none"
                     />
                 </VStack>
 
                 <Button
                     size="lg"
-                    bg="#D4AF37"
-                    color="#F5F1E8"
-                    _hover={{ bg: "#C5A028" }}
+                    bg="#00C6D1"
+                    color="#0B1116"
+                    _hover={{ bg: "#00A8B3" }}
                     w="full"
                     mt={4}
                     onClick={handleComplete}
+                    fontWeight="bold"
                 >
                     Complete Setup
                 </Button>
