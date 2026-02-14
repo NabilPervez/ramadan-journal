@@ -56,7 +56,7 @@ export const dailyLogSlice = createSlice({
     name: 'dailyLog',
     initialState,
     reducers: {
-        setDailyLog: (state, action: PayloadAction<DailyLogState>) => {
+        setDailyLog: (_state, action: PayloadAction<DailyLogState>) => {
             return action.payload
         },
         updatePrayer: (state, action: PayloadAction<{ prayer: keyof DailyLogState['prayers']; status: PrayerStatus }>) => {

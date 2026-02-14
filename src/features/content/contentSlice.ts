@@ -37,8 +37,11 @@ export const contentSlice = createSlice({
         removeDua: (state, action: PayloadAction<string>) => {
             state.duaList = state.duaList.filter((d) => d.id !== action.payload)
         },
+        setContent: (_state, action: PayloadAction<ContentState>) => {
+            return action.payload
+        },
     },
 })
 
-export const { updateQuranProgress, addDua, removeDua } = contentSlice.actions
+export const { updateQuranProgress, addDua, removeDua, setContent } = contentSlice.actions
 export default contentSlice.reducer

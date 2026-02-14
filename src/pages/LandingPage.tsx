@@ -12,7 +12,7 @@ const Feature = ({ icon, title, text }: { icon: React.ReactElement, title: strin
         rounded="xl"
         shadow="md"
         align="start"
-        spacing={4}
+        gap={4}
         height="100%"
         _hover={{ transform: 'translateY(-5px)', shadow: 'lg' }}
         transition="all 0.3s"
@@ -45,7 +45,7 @@ const LandingPage = () => {
                     bgImage="url('https://www.transparenttextures.com/patterns/arabesque.png')"
                 />
                 <Container maxW="container.xl" position="relative" zIndex={1}>
-                    <VStack spacing={8} textAlign="center" maxW="2xl" mx="auto">
+                    <VStack gap={8} textAlign="center" maxW="2xl" mx="auto">
                         <MotionBox
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -92,7 +92,7 @@ const LandingPage = () => {
 
             {/* Features Section */}
             <Container maxW="container.xl" mt="-20" position="relative" zIndex={2} mb={20}>
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
+                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={8}>
                     <Feature
                         icon={<FaPray />}
                         title="Prayer Tracker"
@@ -119,7 +119,7 @@ const LandingPage = () => {
             {/* Benefits / Why Use Section */}
             <Box py={20} bg="white">
                 <Container maxW="container.xl">
-                    <Stack direction={{ base: "column", md: "row" }} spacing={12} align="center">
+                    <Stack direction={{ base: "column", md: "row" }} gap={12} align="center">
                         <Box flex={1}>
                             <Heading color="#0F4C5C" fontFamily="'Playfair Display', serif" mb={6}>
                                 More Than Just a Tracker

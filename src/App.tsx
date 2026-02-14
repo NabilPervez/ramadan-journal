@@ -1,45 +1,77 @@
 import { BrowserRouter as Router, Routes, Route, Link, Outlet } from 'react-router-dom'
-import { Box, Flex, Button } from '@chakra-ui/react'
+import { Box, Flex, VStack, Text } from '@chakra-ui/react'
+import Setup from './pages/Setup'
+import Dashboard from './pages/Dashboard'
+import Journal from './pages/Journal'
+import Quran from './pages/Quran'
+import Dua from './pages/Dua'
+import Settings from './pages/Settings'
 import LandingPage from './pages/LandingPage'
-
-// Placeholder components
-const Dashboard = () => <Box p={5}>Dashboard Content</Box>
-const Journal = () => <Box p={5}>Journal Content</Box>
-const Quran = () => <Box p={5}>Quran Content</Box>
-const Dua = () => <Box p={5}>Dua Content</Box>
-const Settings = () => <Box p={5}>Settings Content</Box>
-const Setup = () => <Box p={5}>Setup Content - <Link to="/dashboard">Complete Setup</Link></Box>
+import { usePersistence } from './hooks/usePersistence'
+import { FaHome, FaBook, FaQuran, FaHands, FaCog } from 'react-icons/fa'
 
 // Navigation
 const Navigation = () => (
   <Flex
     as="nav"
-    bg="teal.600"
-    color="white"
-    p={4}
+    bg="white"
+    color="#0F4C5C"
+    p={2}
     justify="space-around"
+    align="center"
     position="fixed"
     bottom={0}
     left={0}
     right={0}
     zIndex={100}
+    pb="env(safe-area-inset-bottom, 20px)"
+    borderTop="1px solid"
+    borderColor="gray.100"
+    shadow="0 -4px 6px -1px rgba(0, 0, 0, 0.05)"
   >
-    <Link to="/dashboard"><Button variant="ghost" colorPalette="white">Home</Button></Link>
-    <Link to="/journal"><Button variant="ghost" colorPalette="white">Journal</Button></Link>
-    <Link to="/quran"><Button variant="ghost" colorPalette="white">Quran</Button></Link>
-    <Link to="/dua"><Button variant="ghost" colorPalette="white">Dua</Button></Link>
-    <Link to="/settings"><Button variant="ghost" colorPalette="white">Settings</Button></Link>
+    <Link to="/dashboard">
+      <VStack gap={0} p={2}>
+        <FaHome size={20} />
+        <Text fontSize="xs">Home</Text>
+      </VStack>
+    </Link>
+    <Link to="/journal">
+      <VStack gap={0} p={2}>
+        <FaBook size={20} />
+        <Text fontSize="xs">Journal</Text>
+      </VStack>
+    </Link>
+    <Link to="/quran">
+      <VStack gap={0} p={2}>
+        <FaQuran size={20} />
+        <Text fontSize="xs">Quran</Text>
+      </VStack>
+    </Link>
+    <Link to="/dua">
+      <VStack gap={0} p={2}>
+        <FaHands size={20} />
+        <Text fontSize="xs">Dua</Text>
+      </VStack>
+    </Link>
+    <Link to="/settings">
+      <VStack gap={0} p={2}>
+        <FaCog size={20} />
+        <Text fontSize="xs">Settings</Text>
+      </VStack>
+    </Link>
   </Flex>
 )
 
 const Layout = () => (
-  <Box minH="100vh" bg="#F5F1E8" pb="80px">
+  <Box minH="100vh" bg="#F5F1E8">
     <Outlet />
     <Navigation />
   </Box>
 )
 
 function App() {
+  usePersistence()
+
   return (
     <Router>
       <Routes>
