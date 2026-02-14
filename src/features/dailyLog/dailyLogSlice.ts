@@ -67,11 +67,22 @@ export const dailyLogSlice = createSlice({
         incrementWater: (state) => {
             state.wellness.waterCount += 1
         },
+        decrementWater: (state) => {
+            if (state.wellness.waterCount > 0) {
+                state.wellness.waterCount -= 1
+            }
+        },
+        toggleSunnah: (state) => {
+            state.sunnahDidDo = !state.sunnahDidDo
+        },
+        setSleepHours: (state, action: PayloadAction<number>) => {
+            state.wellness.sleepHours = action.payload
+        },
         updateJournal: (state, action: PayloadAction<Partial<DailyLogState['journal']>>) => {
             state.journal = { ...state.journal, ...action.payload }
         },
     },
 })
 
-export const { setDailyLog, updatePrayer, incrementWater, updateJournal } = dailyLogSlice.actions
+export const { setDailyLog, updatePrayer, incrementWater, decrementWater, updateJournal, toggleSunnah, setSleepHours } = dailyLogSlice.actions
 export default dailyLogSlice.reducer
